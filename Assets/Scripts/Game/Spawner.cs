@@ -10,6 +10,8 @@ public class Spawner : MonoBehaviour
     public static Dictionary<int, GameObject> EnemyPrefabs;
     //Queues for different kind of enemies to be spawned
     public static Dictionary<int, Queue<Enemy>> EnemyObjectPools;
+
+    public static List<Transform> LiveEnemiesTransform;
     
     private static bool IsInitialized;
     public static void Init()
@@ -18,7 +20,7 @@ public class Spawner : MonoBehaviour
             EnemyPrefabs = new Dictionary<int, GameObject>();
             EnemyObjectPools = new Dictionary<int, Queue<Enemy>>();
             LiveEnemies = new List<Enemy>();
-
+            LiveEnemiesTransform = new List<Transform>();
             //Getting all enemies within Resources folder
             EnemySpawnData[] Enemies = Resources.LoadAll<EnemySpawnData>("Enemies");
 
@@ -46,10 +48,11 @@ public class Spawner : MonoBehaviour
             {
                 SpawnedEnemy = ReferencedQueue.Dequeue();
                 SpawnedEnemy.Init();
+                SpawnedEnemy.gameObject.SetActive(true);
             }
             else
             {
-                GameObject NewEnemy = Instantiate(EnemyPrefabs[EnemyID], Vector3.zero, Quaternion.identity);
+                GameObject NewEnemy = Instantiate(EnemyPrefabs[EnemyID], GameM.NodePositions[0], Quaternion.identity);
                 SpawnedEnemy = NewEnemy.GetComponent<Enemy>();
                 SpawnedEnemy.Init();
             }
@@ -58,8 +61,21 @@ public class Spawner : MonoBehaviour
         {
             return null;
         }
+
+        LiveEnemiesTransform.Add(SpawnedEnemy.transform);
+        //Adding all spawned enemies to list
+        LiveEnemies.Add(SpawnedEnemy);
+        SpawnedEnemy.ID = EnemyID;
         return SpawnedEnemy;
     }
 
-
+    //Removing Enemies
+    public static void KillEnemy(Enemy EnemyToRemove)
+    {
+        EnemyObjectPools[EnemyToRemove.ID].Enqueue(EnemyToRemove);
+        EnemyToRemove.gameObject.SetActive(false);
+        LiveEnemiesTransform.Remove(EnemyToRemove.transform);
+        //Removing enemy from liveenemies list
+        LiveEnemies.Remove(EnemyToRemove);
+    }
 }

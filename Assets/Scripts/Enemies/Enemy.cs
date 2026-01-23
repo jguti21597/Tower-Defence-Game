@@ -8,10 +8,12 @@ public class Enemy : MonoBehaviour
     public float health;
     public float speed;
     public int ID;
+    public int NodeIndex;
 
     public void Init()
     {
         health = maxhealth;
-        
+        transform.position = GameM.NodePositions[0];
+        NodeIndex = 0;
     }
 }
