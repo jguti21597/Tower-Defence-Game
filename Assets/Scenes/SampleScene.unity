@@ -1548,6 +1548,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCamera: {fileID: 963194227}
+  PlacementCollideMask:
+    serializedVersion: 2
+    m_Bits: 55
+  PlacementCheckMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!4 &1402753372
 Transform:
   m_ObjectHideFlags: 0
